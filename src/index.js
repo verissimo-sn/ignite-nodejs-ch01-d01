@@ -111,7 +111,12 @@ app.patch('/todos/:id/done', checksExistsUserAccount, (request, response) => {
 });
 
 app.delete('/todos/:id', checksExistsUserAccount, (request, response) => {
-  // Complete aqui
+  const { user: { todos } } = request;
+  const { id } = request.params;
+
+  todos.splice(todos[id], 1);
+
+  return response.send();
 });
 
 module.exports = app;
