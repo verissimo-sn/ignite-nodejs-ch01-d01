@@ -91,7 +91,23 @@ app.put('/todos/:id', checksExistsUserAccount, (request, response) => {
 });
 
 app.patch('/todos/:id/done', checksExistsUserAccount, (request, response) => {
-  // Complete aqui
+  const { user: { todos } } = request;
+  const { id } = request.params;
+
+  const [updatedTodo] = todos.map(todo => {
+    if(todo.id === id) {
+      return {
+        ...todo,
+        done: true
+      }
+    }
+  });
+
+  if(!updatedTodo) {
+    return response.status(400).json({error: 'Task not found'});
+  }
+
+  return response.status(200).send(updatedTodo);
 });
 
 app.delete('/todos/:id', checksExistsUserAccount, (request, response) => {
