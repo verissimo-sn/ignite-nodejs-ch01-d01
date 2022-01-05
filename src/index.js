@@ -55,7 +55,7 @@ app.post('/todos', checksExistsUserAccount, (request, response) => {
   const { title, deadline } = request.body;
 
   const newTodo = { 
-    id: uuidv4,
+    id: uuidv4(),
     title,
     done: false,
     deadline: new Date(deadline),
@@ -68,7 +68,26 @@ app.post('/todos', checksExistsUserAccount, (request, response) => {
 });
 
 app.put('/todos/:id', checksExistsUserAccount, (request, response) => {
-  // Complete aqui
+  const { user: { todos } } = request;
+  const { id } = request.params;
+  const { title, deadline } = request.body;
+
+  const [updatedTodo] = todos.map(todo => {
+    if(todo.id === id) {
+      return {
+        ...todo,
+        title,
+        deadline
+      }
+    }
+  });
+
+  if(!updatedTodo) {
+    return response.status(400).json({error: 'Task not found'});
+  }
+
+  return response.status(200).send(updatedTodo);
+
 });
 
 app.patch('/todos/:id/done', checksExistsUserAccount, (request, response) => {
